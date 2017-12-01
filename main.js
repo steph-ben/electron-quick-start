@@ -34,10 +34,45 @@ function createWindow () {
   })
 }
 
+function goPython() {
+  // call python?
+  //var subpy = require('child_process').spawn('python', ['./hello.py']);
+  var hello_path = path.join(__dirname, 'dist/hello/hello');
+  var subpy = require('child_process').spawn(hello_path);
+  var rq = require('request-promise');
+  var mainAddr = 'http://localhost:5000';
+
+  var openWindow = function(){
+    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    //mainWindow.loadURL('http://localhost:5000');
+    mainWindow.webContents.openDevTools();
+    mainWindow.on('closed', function() {
+      mainWindow = null;
+      subpy.kill('SIGINT');
+    });
+  };
+
+  var startUp = function(){
+    rq(mainAddr)
+      .then(function(htmlString){
+        console.log('server started!');
+        openWindow();
+      })
+      .catch(function(err){
+        //console.log('waiting for the server start...');
+        startUp();
+      });
+  };
+
+  // fire!
+  startUp();
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', goPython)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
