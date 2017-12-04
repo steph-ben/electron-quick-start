@@ -1,3 +1,8 @@
+## NodeJs install
+Cf. https://nodejs.org/en/download/package-manager/#enterprise-linux-and-fedora
+
+    curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+
 ## NodeJs deps
     npm install
     npm install electron
